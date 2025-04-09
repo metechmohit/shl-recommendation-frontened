@@ -130,17 +130,13 @@
     <div id="errorMessage" class="error"></div>
     <div id="cardsContainer" class="cards-container"></div>
 
-        <script>
+    <script>
         function pingServer() {
             fetch('https://shl-recommender-system.onrender.com/')
                 .catch(error => console.error('Ping failed:', error));
         }
-
- 
         pingServer();
-        
-
-        setInterval(pingServer, 15 * 60 * 1000);
+        setInterval(pingServer, 10 * 60 * 1000);
     </script>
 
     <script>
