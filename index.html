@@ -176,21 +176,22 @@
             }
 
             assessments.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-              
-                card.innerHTML = `
-                  <h2>${item["Assessment Name"]}</h2>
-                  <p><strong>Description:</strong> ${item.Description}</p>
-                  <p><strong>Duration:</strong> ${item.Time}</p>
-                  <p><strong>Remote Support:</strong> ${item["Remote Testing Support"]}</p>
-                  <p><strong>Adaptive Support:</strong> ${item["Adaptive/IRT Support"]}</p>
-                  <p><strong>Test Type:</strong> ${item["Test Type Keys"]}</p>
-                  <p><a href="${item["Assessment URL"]}" target="_blank">View Assessment</a></p>
-                `;
-              
-                cardsContainer.appendChild(card);
-              });
+            const card = document.createElement('div');
+            card.className = 'card';
+          
+            card.innerHTML = `
+              <h2>${item["Assessment Name"]}</h2>
+              <p><strong>Description:</strong> ${item["Description"]}</p>
+              <p><strong>Duration:</strong> ${item["Time"]}</p>
+              <p><strong>Remote Support:</strong> ${item["Remote Testing Support"]}</p>
+              <p><strong>Adaptive Support:</strong> ${item["Adaptive/IRT Support"]}</p>
+              <p><strong>Test Type:</strong> ${item["Test Type Keys"]}</p>
+              <p><a href="${item["Assessment URL"]}" target="_blank">View Assessment</a></p>
+            `;
+          
+            cardsContainer.appendChild(card);
+          });
+
           })
           .catch(error => {
             loader.style.display = 'none';
