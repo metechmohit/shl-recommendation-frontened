@@ -158,7 +158,7 @@
 
         loader.style.display = 'block';
 
-        fetch('https://shl-recommender-system.onrender.com/recommend', {
+        fetch('https://shl-recommender-system.onrender.com/recommend?frontend=true', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query })
