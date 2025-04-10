@@ -133,7 +133,7 @@
     <script>
       // Keep Render backend awake
       function pingServer() {
-        fetch('https://shl-recommender-system.onrender.com/').catch(error =>
+        fetch('https://shl-recommender-system.onrender.com/health').catch(error =>
           console.error('Ping failed:', error)
         );
       }
@@ -169,7 +169,7 @@
             return res.json();
           })
           .then(data => {
-            const assessments = data.recommended_assessments;
+            const assessments = data; 
             if (!Array.isArray(assessments) || assessments.length === 0) {
               errorMessage.textContent = 'No assessments found.';
               return;
