@@ -121,7 +121,7 @@
       <input
         type="text"
         id="queryInput"
-        placeholder="Enter your query (e.g. assesment for a manager position)"
+        placeholder="Enter your query (e.g. assessment for a manager position)"
       />
       <button onclick="fetchAssessments()">Search</button>
     </div>
@@ -131,12 +131,14 @@
     <div id="cardsContainer" class="cards-container"></div>
 
     <script>
-        function pingServer() {
-            fetch('https://shl-recommender-system.onrender.com/')
-                .catch(error => console.error('Ping failed:', error));
-        }
-        pingServer();
-        setInterval(pingServer, 10 * 60 * 1000);
+      // Keep Render backend awake
+      function pingServer() {
+        fetch('https://shl-recommender-system.onrender.com/').catch(error =>
+          console.error('Ping failed:', error)
+        );
+      }
+      pingServer();
+      setInterval(pingServer, 10 * 60 * 1000);
     </script>
 
     <script>
@@ -146,7 +148,6 @@
         const cardsContainer = document.getElementById('cardsContainer');
         const errorMessage = document.getElementById('errorMessage');
 
-        // Clear previous content
         cardsContainer.innerHTML = '';
         errorMessage.textContent = '';
 
@@ -157,38 +158,43 @@
 
         loader.style.display = 'block';
 
-        const topK = 8; // You can adjust this value as needed
-        const url = `https://shl-recommender-system.onrender.com/recommend?query=${encodeURIComponent(query)}&top_k=${Number(8)}`;
-
-        fetch(url)
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error('Failed to fetch data.');
-            }
+        fetch('https://shl-recommender-system.onrender.com/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        })
+          .then(res => {
+            loader.style.display = 'none';
+            if (!res.ok) throw new Error('Failed to fetch data.');
             return res.json();
           })
-          .then((data) => {
-            loader.style.display = 'none';
-            if (!Array.isArray(data) || data.length === 0) {
+          .then(data => {
+            const assessments = data.recommended_assessments;
+            if (!Array.isArray(assessments) || assessments.length === 0) {
               errorMessage.textContent = 'No assessments found.';
               return;
             }
 
-            data.forEach((item) => {
+            assessments.forEach(item => {
               const card = document.createElement('div');
               card.className = 'card';
 
               card.innerHTML = `
-              <h2>${item['Assessment Name']}</h2>
-              <p><strong>Time:</strong> ${item['Time']}</p>
-              <p><strong>Remote Testing Support:</strong> ${item['Remote Testing Support']}</p>
-              <p><strong>Adaptive/IRT Support:</strong> ${item['Adaptive/IRT Support']}</p>
-              <p><strong>Test Type Keys:</strong> ${item['Test Type Keys']}</p>
-              <p><a href="${item['Assessment URL']}" target="_blank">View Assessment</a></p>
-            `;
+                <h2>${item.description.slice(0, 60)}...</h2>
+                <p><strong>Duration:</strong> ${item.duration} min</p>
+                <p><strong>Remote Support:</strong> ${item.remote_support}</p>
+                <p><strong>Adaptive Support:</strong> ${item.adaptive_support}</p>
+                <p><strong>Test Type:</strong> ${item.test_type.join(', ')}</p>
+                <p><a href="${item.url}" target="_blank">View Assessment</a></p>
+              `;
 
               cardsContainer.appendChild(card);
             });
+          })
+          .catch(error => {
+            loader.style.display = 'none';
+            errorMessage.textContent = 'Something went wrong. Try again later.';
+            console.error(error);
           });
       }
     </script>
